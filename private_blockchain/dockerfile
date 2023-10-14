@@ -1,0 +1,37 @@
+# Start from the Ethereum client-go base image with all tools included in release 1.9
+FROM ethereum/client-go:alltools-release-1.11
+
+WORKDIR /home/Private_Ethereum_Blockchain/
+
+# Copy the contents of the current directory to the /home/Private_Ethereum_Blockchain/ directory in the container
+COPY . .
+
+# Give execute permissions to the Run_Bootnode.sh script in the /home/Private_Ethereum_Blockchain/ directory
+RUN chmod +x Run_Bootnode.sh
+
+# Give execute permissions to the Run_Bootnode.sh script in the /home/Private_Ethereum_Blockchain/ directory
+RUN chmod +x validator_1.sh
+
+# Give execute permissions to the Run_Node2.sh script in the /home/Private_Ethereum_Blockchain/ directory
+RUN chmod +x validator_2.sh
+
+# Give execute permissions to the Run_Node3.sh script in the /home/Private_Ethereum_Blockchain/ directory
+RUN chmod +x validator_3.sh
+
+# Initialize the private Ethereum blockchain for 3 nodes
+
+RUN geth --datadir ./Node1/  init genesis.json
+
+RUN geth --datadir ./Node2/  init genesis.json
+
+RUN geth --datadir ./Node3/  init genesis.json
+
+# Expose port 30303 for the Ethereum P2P protocol
+EXPOSE 30303
+
+# Expose port 8545 for JSON-RPC API access to the Ethereum node
+EXPOSE 8545
+
+# Set the default command to run the Start_blockchain.sh script when the container start
+
+CMD ["sh"]

@@ -1,0 +1,118 @@
+.icons {
+  display: flex;
+  align-items: center;
+}
+.counter {
+  width: 20px;
+  height: 20px;
+  background-color: red;
+  border-radius: 50%;
+  padding: 5px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: -5px;
+  right: -5px;
+}
+.icon {
+  margin-left: 15px;
+  cursor: pointer;
+  position: relative;
+}
+.notifications {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  background-color: white;
+  color: black;
+  font-weight: 300;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  overflow: auto; 
+}
+
+.notifications .button {
+  width: 16px;
+  height: 16px;
+  background-color:#239aa7;
+  border-radius: 50%;
+  border-color: #239aa7;
+  padding: 5px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 10px; /* Adjust this value to position the button correctly */
+  right: 10px; /* Adjust this value to position the button correctly */
+  transform: translate(50%, -50%);
+}
+
+.notification {
+  position: relative;
+  padding: 5px;
+  font-size: 14px;
+  background-color:#ECF8F9;
+  margin: 2px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.nButton {
+  width: 80%;
+  padding: 5px;
+  margin-top: 10px;
+}
+.notifTitle{
+  font-size: 14px;
+  font-weight: bold;
+  background-color:aqua;
+  border-radius: 10px;
+}
+.notifOption{
+position: absolute;
+margin: 2px;
+bottom: 0;
+right: 0;
+}
+.checkButton{
+border-radius: 4px;
+background-color: #2391a5;
+}
+.markReadButton{
+border-radius: 4px;
+background-color: #239aa7;
+}
+.checkButton:hover {
+background-color: #2b8cc8;
+color: #fff;
+}
+.markReadButton:hover {
+background-color: #124a5f;
+color: #fff;
+}
+/* .swal2-popup {
+width: 500px !important;
+height: 100px !important;
+}
+.swal2-title {
+font-size: 14px !important;
+}
+
+.swal2-icon {
+font-size: 5px !important;
+} */
+.custom-sweetalert {
+width: 500px !important;
+height: 600px !important;
+}
+.void {
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  color: white;
+  margin: 0; /* Optional, to remove default margin */
+  padding: 0; /* Optional, to remove default padding */
+}

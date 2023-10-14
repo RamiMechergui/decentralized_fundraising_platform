@@ -1,0 +1,68 @@
+[
+  {
+    "name"              : "node-app",
+    "script"            : "app.js",
+    "log_date_format"   : "YYYY-MM-DD HH:mm Z",
+    "merge_logs"        : false,
+    "watch"             : false,
+    "max_restarts"      : 10,
+    "exec_interpreter"  : "node",
+    "exec_mode"         : "fork_mode",
+    "env":
+    {
+      "NODE_ENV"        : "production",
+      "RPC_HOST"        : "validator1",
+      "RPC_PORT"        : "8545",
+      "LISTENING_PORT"  : "30303",
+      "INSTANCE_NAME"   : "Validator_1",
+      "CONTACT_DETAILS" : "",
+      "WS_SERVER"       : "http://monitordashboard:3000",
+      "WS_SECRET"       : "mysecret",
+      "VERBOSITY"       : 2
+    }
+  },
+  {
+    "name"              : "node-app",
+    "script"            : "app.js",
+    "log_date_format"   : "YYYY-MM-DD HH:mm Z",
+    "merge_logs"        : false,
+    "watch"             : false,
+    "max_restarts"      : 10,
+    "exec_interpreter"  : "node",
+    "exec_mode"         : "fork_mode",
+    "env":
+    {
+      "NODE_ENV"        : "production",
+      "RPC_HOST"        : "validator2",
+      "RPC_PORT"        : "8546",
+      "LISTENING_PORT"  : "30303",
+      "INSTANCE_NAME"   : "Validator_2",
+      "CONTACT_DETAILS" : "",
+      "WS_SERVER"       : "http://monitordashboard:3000",
+      "WS_SECRET"       : "mysecret",
+      "VERBOSITY"       : 2
+    }
+  },
+  {
+    "name"              : "node-app",
+    "script"            : "app.js",
+    "log_date_format"   : "YYYY-MM-DD HH:mm Z",
+    "merge_logs"        : false,
+    "watch"             : false,
+    "max_restarts"      : 10,
+    "exec_interpreter"  : "node",
+    "exec_mode"         : "fork_mode",
+    "env":
+    {
+      "NODE_ENV"        : "production",
+      "RPC_HOST"        : "validator3",
+      "RPC_PORT"        : "8547",
+      "LISTENING_PORT"  : "30303",
+      "INSTANCE_NAME"   : "Validator_3",
+      "CONTACT_DETAILS" : "",
+      "WS_SERVER"       : "http://monitordashboard:3000",
+      "WS_SECRET"       : "mysecret",
+      "VERBOSITY"       : 2
+    }
+  }
+]

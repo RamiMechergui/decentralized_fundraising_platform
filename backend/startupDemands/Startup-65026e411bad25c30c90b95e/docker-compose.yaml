@@ -1,0 +1,212 @@
+version: "3.7"
+
+services:
+
+  traefik:
+    image: traefik:v2.9.10
+    container_name: traefik
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik.yml:/etc/traefik/traefik.yml
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.${Domain_Name}`)"
+      - "traefik.http.middlewares.testheader.headers.accesscontrolallowmethods=GET,POST,OPTIONS,PUT"
+      - "traefik.http.middlewares.testheader.headers.accesscontrolallowheaders=*"
+      - "traefik.http.routers.traefik.entrypoints=web"
+      - "traefik.http.services.traefik.loadbalancer.server.port=8080"
+    networks:
+      - proxy
+
+  frontend:
+    build:
+      context: ./frontend/
+    container_name: frontend
+    volumes:
+      - ./frontend:/app
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.service=frontend"
+      - "traefik.http.routers.frontend.rule=Host(`frontend.${Domain_Name}`)"
+      - "traefik.http.routers.frontend.entrypoints=web"
+      - "traefik.http.middlewares.testheader.headers.accesscontrolallowmethods=GET,POST,OPTIONS,PUT"
+      - "traefik.http.middlewares.testheader.headers.accesscontrolallowheaders=*"
+      - "traefik.http.services.frontend.loadbalancer.server.port=3011"
+    networks:
+      - proxy
+
+
+  bootnode :
+
+          build :
+             context : ./private_blockchain
+          image: bootnode:latest
+          container_name : Bootnode
+          volumes :
+             - ./private_blockchain:/home/Private_Ethereum_Blockchain/:ro
+          command :
+            - /home/Private_Ethereum_Blockchain/Run_Bootnode.sh
+          labels:
+                - "traefik.enable=true"
+                - "traefik.http.routers.bootnode.rule=Host(`bootnode.${Domain_Name}`)"
+                - "traefik.docker.network=proxy"
+                - "traefik.http.routers.bootnode.service=bootnode"
+                - "traefik.http.routers.bootnode.entrypoints=web"
+                - "traefik.http.services.bootnode.loadbalancer.server.port=30310"
+          depends_on:
+                - traefik
+          networks:
+                - proxy
+
+  validator1 :
+
+          build :
+            context : ./private_blockchain
+          image: validator_1:latest
+          container_name : Validator_1
+          #volumes :
+          #  - ./private_blockchain:/home/Private_Ethereum_Blockchain/
+          depends_on :
+           - bootnode
+          command :
+           - /home/Private_Ethereum_Blockchain/validator_1.sh
+          labels:
+                - "traefik.enable=true"
+                - "traefik.docker.network=proxy"
+                - "traefik.http.routers.validator1.service=validator1"
+                - "traefik.http.routers.validator1.rule=Host(`blockchain.${Domain_Name}`)"
+                - "traefik.http.routers.validator1.entrypoints=web"
+                - "traefik.http.services.validator1.loadbalancer.server.port=8545"
+          networks:
+                - proxy
+
+  validator2 :
+
+         build :
+           context : ./private_blockchain
+         container_name : Validator_2
+         #volumes :
+         #  - ./private_blockchain:/home/Private_Ethereum_Blockchain/
+         depends_on :
+           - bootnode
+         command :
+           - /home/Private_Ethereum_Blockchain/validator_2.sh
+         labels :
+           - "traefik.enable=true"
+           - "traefik.docker.network=proxy"
+           - "traefik.http.routers.validator2.service=validator2"
+           - "traefik.http.routers.validator2.rule=Host(`validator2.${Domain_Name}`)"
+           - "traefik.http.routers.validator2.entrypoints=web"
+           - "traefik.http.services.validator2.loadbalancer.server.port=8546"
+         networks:
+          - proxy
+
+  validator3 :
+
+         build :
+           context : ./private_blockchain
+         container_name : Validator_3
+         #volumes :
+         #  - ./private_blockchain:/home/Private_Ethereum_Blockchain/
+         depends_on :
+           - validator2
+         command :
+           - /home/Private_Ethereum_Blockchain/validator_3.sh
+         labels :
+           - "traefik.enable=true"
+           - "traefik.docker.network=proxy"
+           - "traefik.http.routers.validator3.service=validator3"
+           - "traefik.http.routers.validator3.rule=Host(`validator3.${Domain_Name}`)"
+           - "traefik.http.routers.validator3.entrypoints=web"
+           - "traefik.http.services.validator3.loadbalancer.server.port=8547"
+         networks:
+          - proxy
+          
+  monitorapi:
+    build:
+      context: ./Monitor/eth-net-intelligence-api
+    container_name: monitorapi
+    volumes:
+      - ./Monitor/eth-net-intelligence-api/app.json:/home/ethnetintel/eth-net-intelligence-api/app.json
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.monitorapi.service=monitorapi"
+      - "traefik.http.routers.monitorapi.rule=Host(`monitorapi.${Domain_Name}`)"
+      - "traefik.http.routers.monitorapi.entrypoints=web"
+      - "traefik.http.services.monitorapi.loadbalancer.server.port=30303"
+    networks:
+      - proxy
+
+  monitordashboard:
+    build:
+      context: ./Monitor/eth-netstats
+    container_name: monitordashboard
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.monitordashboard.service=monitordashboard"
+      - "traefik.http.routers.monitordashboard.rule=Host(`monitordashboard.${Domain_Name}`)"
+      - "traefik.http.routers.monitordashboard.entrypoints=web"
+      - "traefik.http.services.monitordashboard.loadbalancer.server.port=3000"
+    networks:
+      - proxy
+
+  backend:
+    build:
+      context: ./backend/
+    container_name: Backend
+    volumes:
+      - ./backend:/app
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=Host(`backend.${Domain_Name}`)"
+      - "traefik.http.routers.backend.entrypoints=web"
+      - "traefik.http.middlewares.testheader.headers.accesscontrolallowmethods=GET,POST,OPTIONS,PUT"
+      - "traefik.http.middlewares.testheader.headers.accesscontrolallowheaders=*"
+      - "traefik.http.services.backend.loadbalancer.server.port=30315"
+    networks:
+      - proxy
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: tokenopp
+      MONGO_INITDB_ROOT_PASSWORD: smartcontract
+    ports:
+      - 27017:27017
+    networks:
+      - proxy
+
+  mongo-express:
+    image: mongo-express
+    container_name: mongogui
+    restart: always
+    ports:
+          - 8081:8081
+    depends_on:
+      - mongodb
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongodb
+      ME_CONFIG_BASICAUTH_USERNAME: root
+      ME_CONFIG_BASICAUTH_PASSWORD: root
+      ME_CONFIG_MONGODB_ADMINUSERNAME: tokenopp
+      ME_CONFIG_MONGODB_ADMINPASSWORD: smartcontract
+      ME_CONFIG_MONGODB_URL: mongodb://tokenopp:smartcontract@mongo:27017/
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mongo-express.service=mongo-express"
+      - "traefik.http.routers.mongo-express.rule=Host(`database.${Domain_Name}`)"
+      - "traefik.http.routers.mongo-express.entrypoints=web"
+      - "traefik.http.services.mongo-express.loadbalancer.server.port=8081"
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true
